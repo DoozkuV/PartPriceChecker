@@ -4,11 +4,11 @@ namespace PartPriceChecker.Services;
 
 public class MockApiService : IApiService
 {
-    private readonly Dictionary<string, PartApiResponse> _mockData;
+    private readonly Dictionary<string, PartResponse> _mockData;
 
     public MockApiService()
     {
-        _mockData = new Dictionary<string, PartApiResponse>
+        _mockData = new Dictionary<string, PartResponse>
         {
             ["W10295370"] = new()
             {
@@ -40,7 +40,7 @@ public class MockApiService : IApiService
         };
     }
 
-    public async Task<PartApiResponse> GetPartPriceAsync(string partNumber)
+    public async Task<PartResponse> GetPartPriceAsync(string partNumber)
     {
         await Task.Delay(100); // Simulate API delay
 
@@ -49,7 +49,7 @@ public class MockApiService : IApiService
             return response;
         }
 
-        return new PartApiResponse
+        return new PartResponse
         {
             PartNumber = partNumber,
         };

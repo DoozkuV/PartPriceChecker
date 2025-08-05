@@ -5,7 +5,7 @@ namespace PartPriceChecker.Services;
 
 public class OutputService
 {
-    public void DisplayResultsInConsole(List<PartApiResponse> results)
+    public void DisplayResultsInConsole(List<PartResponse> results)
     {
         var table = new ConsoleTable(
                 "PartNumber",

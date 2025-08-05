@@ -1,6 +1,6 @@
 namespace PartPriceChecker.Models;
 
-public class PartApiResponse
+public class PartResponse
 {
     public string PartNumber { get; set; } = string.Empty;
     public string KnownPartNumber { get; set; } = "";

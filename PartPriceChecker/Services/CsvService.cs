@@ -13,7 +13,7 @@ public class CsvService
         return csv.GetRecords<PartInput>().ToList();
     }
 
-    public void WriteResultsToCsv(List<PartApiResponse> results, string filePath)
+    public void WriteResultsToCsv(List<PartResponse> results, string filePath)
     {
         using var writer = new StringWriter();
         using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);

@@ -8,7 +8,7 @@ namespace PartPriceChecker.Services;
 public class HttpApiService : IApiService
 {
     private readonly HttpClient _httpClient;
-    private readonly string _baseUrl = "https://example.com/api/procurement/price";
+    private readonly string _baseUrl;
 
     public HttpApiService(HttpClient httpClient, string url)
     {
@@ -16,7 +16,7 @@ public class HttpApiService : IApiService
         _baseUrl = url;
     }
 
-    public async Task<PartApiResponse> GetPartPriceAsync(string partNumber)
+    public async Task<PartResponse> GetPartPriceAsync(string partNumber)
     {
         try
         {
@@ -25,16 +25,16 @@ public class HttpApiService : IApiService
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                return new PartApiResponse { PartNumber = partNumber };
+                return new PartResponse { PartNumber = partNumber };
             }
 
             response.EnsureSuccessStatusCode();
             var jsonContent = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<PartApiResponse>(jsonContent, new JsonSerializerOptions
+            return JsonSerializer.Deserialize<PartResponse>(jsonContent, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             }) ??
-            new PartApiResponse
+            new PartResponse
             {
                 PartNumber = partNumber,
                 Availability = "error"
@@ -44,7 +44,7 @@ public class HttpApiService : IApiService
         {
             // TODO: Find a better way of managing errors within this function
             Console.WriteLine($"Error fetching price for {partNumber}: {ex.Message}");
-            return new PartApiResponse
+            return new PartResponse
             {
                 PartNumber = partNumber,
                 Availability = "error"

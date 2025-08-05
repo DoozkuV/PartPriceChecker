@@ -4,7 +4,7 @@ namespace PartPriceChecker.Services;
 
 public interface IApiService
 {
-    Task<PartApiResponse> GetPartPriceAsync(string partNumber);
+    Task<PartResponse> GetPartPriceAsync(string partNumber);
 }
 
 public interface IApplicationService
@@ -42,7 +42,7 @@ public class ApplicationService : IApplicationService
         var parts = _csvService.ReadPartsFromCsv(inputFile);
         QuietWriteLine($"Found {parts.Count} parts to process.");
 
-        var results = new List<PartApiResponse>();
+        var results = new List<PartResponse>();
 
         QuietWriteLine("Fetching prices...");
         foreach (var part in parts)
