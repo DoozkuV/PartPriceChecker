@@ -20,7 +20,7 @@ public class HttpApiService : IApiService
     {
         try
         {
-            var url = $"{_baseUrl}?partNumber={Uri.EscapeDataString(partNumber)}";
+            var url = $"{_baseUrl}/api/procurement/price?partNumber={Uri.EscapeDataString(partNumber)}";
             var response = await _httpClient.GetAsync(url);
 
             if (response.StatusCode == HttpStatusCode.NotFound)

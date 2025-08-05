@@ -45,4 +45,44 @@ public class ApplicationServiceTests
         Assert.Equal(0, result);
         File.Delete(testFile);
     }
+    [Fact]
+    public async Task RunAsync_WithValidInputAndQuiet_ReturnsSuccess()
+    {
+
+        var stringWriter = new StringWriter();
+        var originalConsoleOut = Console.Out;
+        var testFile = Path.GetTempFileName();
+        await File.WriteAllTextAsync(testFile, "PartNumber\nTEST123");
+
+        try
+        {
+            // Capture Console.Out
+            Console.SetOut(stringWriter);
+
+            var csvService = new CsvService();
+            var outputService = new OutputService();
+            var apiService = new Mock<IApiService>();
+
+            apiService.Setup(x => x.GetPartPriceAsync("TEST123"))
+                .ReturnsAsync(new PartResponse
+                {
+                    PartNumber = "TEST123",
+                    Provider = "TestProvider"
+                });
+
+            var appService = new ApplicationService(csvService, outputService, apiService.Object);
+
+            var result = await appService.RunAsync(testFile, null, true);
+
+            Assert.Equal(0, result);
+            Assert.Empty(stringWriter.ToString());
+        }
+        finally
+        {
+            // Restore console state
+            Console.SetOut(originalConsoleOut);
+            File.Delete(testFile);
+        }
+
+    }
 }

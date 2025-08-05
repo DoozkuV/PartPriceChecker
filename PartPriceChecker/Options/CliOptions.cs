@@ -13,7 +13,7 @@ public class CliOptions
     public string? OutputFile { get; set; }
 
     [Option('u', "url", Required = false,
-            Default = "https://example.com/api/procurement/price",
+            Default = "http://localhost:5050",
             HelpText = "Url for API to be hit to receive part data")]
     public string Url { get; set; } = string.Empty;
 
