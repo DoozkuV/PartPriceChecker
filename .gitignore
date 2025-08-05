@@ -32,3 +32,5 @@ out/
 *.userprefs
 .vscode/
 .secrets/
+
+*.csv
