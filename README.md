@@ -6,6 +6,7 @@ Queries a simple API based on a parts.csv file and outputs a CSV fetching the pr
 
 ```
   input (pos. 0)    Required. Input CSV file containing part numbers
+
   -o, --output      Output CSV file path (supresses console table)
 
   -u, --url         (Default: http://localhost:5050) Url for API to be hit to receive part
