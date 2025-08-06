@@ -12,15 +12,19 @@ public class CsvServiceTests
         var testFile = Path.GetTempFileName();
         var csvContent = "PartNumber\nTEST123\nTEST456";
         File.WriteAllText(testFile, csvContent);
+        try
+        {
+            var csvService = new CsvService();
+            var parts = csvService.ReadPartsFromCsv(testFile);
 
-        var csvService = new CsvService();
-        var parts = csvService.ReadPartsFromCsv(testFile);
-
-        Assert.Equal(2, parts.Count);
-        Assert.Equal("TEST123", parts[0].PartNumber);
-        Assert.Equal("TEST456", parts[1].PartNumber);
-
-        File.Delete(testFile);
+            Assert.Equal(2, parts.Count);
+            Assert.Equal("TEST123", parts[0].PartNumber);
+            Assert.Equal("TEST456", parts[1].PartNumber);
+        }
+        finally
+        {
+            File.Delete(testFile);
+        }
     }
 
     [Fact]

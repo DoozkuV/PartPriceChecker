@@ -1,4 +1,3 @@
-using System.Net;
 using Microsoft.AspNetCore.Mvc.Testing;
 using PartPriceChecker.Services;
 using Xunit;
@@ -82,5 +81,27 @@ public class HttpApiServiceTests : IClassFixture<WebApplicationFactory<PartPrice
         Assert.NotNull(result);
         Assert.Equal("", result.PartNumber);
         Assert.Equal("error", result.Availability);
+    }
+
+    [Fact]
+    public async Task GetPartPriceAsync_NonexistantUrl_Throws()
+    {
+        var invalidBaseUrl = "http://localhost:9999";
+        var service = new HttpApiService(new HttpClient(), invalidBaseUrl);
+
+        await Assert.ThrowsAsync<HttpRequestException>(async () =>
+                await service.GetPartPriceAsync("ANYPARTNUM"));
+
+    }
+
+    [Fact]
+    public async Task GetPartPriceAsync_InvalidUrl_Throws()
+    {
+        var invalidBaseUrl = "nonsense";
+        var service = new HttpApiService(new HttpClient(), invalidBaseUrl);
+
+        await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+                await service.GetPartPriceAsync("ANYPARTNUM"));
+
     }
 }

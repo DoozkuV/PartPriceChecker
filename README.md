@@ -1,7 +1,25 @@
 # Part Price Checker
 
-Queries a simple API based on a parts.csv file and outputs a CSV fetching the pricing and availability of the parts. 
+Queries a simple API based on a parts.csv file and outputs a CSV fetching the pricing and availability of the parts. Includes also a mock web-server for testing the application as well as full Unit Tests.
 
+## Usage
+
+```
+  input (pos. 0)    Required. Input CSV file containing part numbers
+  -o, --output      Output CSV file path (supresses console table)
+
+  -u, --url         (Default: http://localhost:5050) Url for API to be hit to receive part
+                    data
+
+  -q, --quiet       (Default: false) Supress all console output except errors
+
+  -m, --mock        (Default: false) Run the program using mock data
+
+  --help            Display this help screen.
+
+  --version         Display version information.
+
+```
 ## Spec
 
 Task: Build a Console App to Query Part Prices from Sample API

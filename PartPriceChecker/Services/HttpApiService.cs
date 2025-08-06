@@ -16,39 +16,36 @@ public class HttpApiService : IApiService
         _baseUrl = url;
     }
 
+
     public async Task<PartResponse> GetPartPriceAsync(string partNumber)
     {
-        try
+        var url = $"{_baseUrl}/api/procurement/price?partNumber={Uri.EscapeDataString(partNumber)}";
+        var response = await _httpClient.GetAsync(url);
+
+        if (response.StatusCode == HttpStatusCode.NotFound)
         {
-            var url = $"{_baseUrl}/api/procurement/price?partNumber={Uri.EscapeDataString(partNumber)}";
-            var response = await _httpClient.GetAsync(url);
-
-            if (response.StatusCode == HttpStatusCode.NotFound)
-            {
-                return new PartResponse { PartNumber = partNumber };
-            }
-
-            response.EnsureSuccessStatusCode();
-            var jsonContent = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<PartResponse>(jsonContent, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            }) ??
-            new PartResponse
-            {
-                PartNumber = partNumber,
-                Availability = "error"
-            };
+            return new PartResponse { PartNumber = partNumber };
         }
-        catch (HttpRequestException ex)
+        else if (!response.IsSuccessStatusCode)
         {
-            // TODO: Find a better way of managing errors within this function
-            Console.WriteLine($"Error fetching price for {partNumber}: {ex.Message}");
             return new PartResponse
             {
                 PartNumber = partNumber,
                 Availability = "error"
             };
+
         }
+
+        response.EnsureSuccessStatusCode();
+        var jsonContent = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<PartResponse>(jsonContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        }) ??
+        new PartResponse
+        {
+            PartNumber = partNumber,
+            Availability = "error"
+        };
     }
 }

@@ -24,29 +24,37 @@ public class ApplicationServiceTests
     [Fact]
     public async Task RunAsync_WithValidInput_ReturnsSuccess()
     {
+
         var testFile = Path.GetTempFileName();
         await File.WriteAllTextAsync(testFile, "PartNumber\nTEST123");
 
-        var csvService = new CsvService();
-        var outputService = new OutputService();
-        var apiService = new Mock<IApiService>();
+        try
+        {
+            var csvService = new CsvService();
+            var outputService = new OutputService();
+            var apiService = new Mock<IApiService>();
 
-        apiService.Setup(x => x.GetPartPriceAsync("TEST123"))
-            .ReturnsAsync(new PartResponse
-            {
-                PartNumber = "TEST123",
-                Provider = "TestProvider"
-            });
+            apiService.Setup(x => x.GetPartPriceAsync("TEST123"))
+                .ReturnsAsync(new PartResponse
+                {
+                    PartNumber = "TEST123",
+                    Provider = "TestProvider"
+                });
 
-        var appService = new ApplicationService(csvService, outputService, apiService.Object);
+            var appService = new ApplicationService(csvService, outputService, apiService.Object);
 
-        var result = await appService.RunAsync(testFile, null, true);
+            var result = await appService.RunAsync(testFile, null, true);
 
-        Assert.Equal(0, result);
-        File.Delete(testFile);
+            Assert.Equal(0, result);
+        }
+        finally
+        {
+            File.Delete(testFile);
+        }
     }
+
     [Fact]
-    public async Task RunAsync_WithValidInputAndQuiet_ReturnsSuccess()
+    public async Task RunAsync_WithValidInputAndQuiet_HasNoOutput()
     {
 
         var stringWriter = new StringWriter();
@@ -84,5 +92,55 @@ public class ApplicationServiceTests
             File.Delete(testFile);
         }
 
+    }
+
+    [Fact]
+    public async Task RunAsync_WithInvalidHttpAddress_ReturnsErrorCode()
+    {
+        var testFile = Path.GetTempFileName();
+        var csvContent = "PartNumber\nTEST123\nTEST456";
+        File.WriteAllText(testFile, csvContent);
+
+        try
+        {
+            var csvService = new CsvService();
+            var outputService = new Mock<OutputService>();
+            var apiService = new HttpApiService(new HttpClient(), "nonsense");
+
+            var appService = new ApplicationService(csvService, outputService.Object, apiService);
+
+            var result = await appService.RunAsync(testFile, null, true);
+
+            Assert.Equal(1, result);
+        }
+        finally
+        {
+            File.Delete(testFile);
+        }
+    }
+
+    [Fact]
+    public async Task RunAsync_WithNonExistantHttpAddress_ReturnsErrorCode()
+    {
+        var testFile = Path.GetTempFileName();
+        var csvContent = "PartNumber\nTEST123\nTEST456";
+        File.WriteAllText(testFile, csvContent);
+
+        try
+        {
+            var csvService = new CsvService();
+            var outputService = new Mock<OutputService>();
+            var apiService = new HttpApiService(new HttpClient(), "http://localhost:9999");
+
+            var appService = new ApplicationService(csvService, outputService.Object, apiService);
+
+            var result = await appService.RunAsync(testFile, null, true);
+
+            Assert.Equal(1, result);
+        }
+        finally
+        {
+            File.Delete(testFile);
+        }
     }
 }

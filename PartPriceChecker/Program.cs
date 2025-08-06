@@ -2,7 +2,6 @@ using CommandLine;
 using PartPriceChecker.Options;
 using PartPriceChecker.Services;
 
-
 return await Parser.Default.ParseArguments<CliOptions>(args)
     .MapResult(
             async options => await RunWithOptions(options),
